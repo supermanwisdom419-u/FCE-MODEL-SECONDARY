@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP ACCESS • ScienceAI Academy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%);
+        }
+        .glass {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white">
+
+    <div class="flex items-center justify-center min-h-screen p-6">
+        <div class="w-full max-w-md">
+            
+            <!-- VIP Header -->
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center gap-3 bg-yellow-500 text-black font-bold text-xl px-8 py-3 rounded-3xl shadow-xl">
+                    <i class="fa-solid fa-crown"></i>
+                    <span>VIP ONLY ACCESS</span>
+                </div>
+                <p class="mt-4 text-slate-400">ScienceAI Academy • Restricted Area</p>
+            </div>
+
+            <!-- Login Card -->
+            <div class="glass border border-yellow-500/30 rounded-3xl shadow-2xl p-10">
+                <h2 class="text-3xl font-semibold text-center mb-8">Login to VIP Section</h2>
+
+                <div class="space-y-6">
+                    <!-- Role Selection -->
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-2">Select Your Role</label>
+                        <select id="role" class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-5 py-4 focus:border-yellow-400 outline-none">
+                            <option value="teacher">Teacher</option>
+                            <option value="prefect">Prefect</option>
+                            <option value="captain">Captain</option>
+                        </select>
+                    </div>
+
+                    <!-- Username -->
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-2">Username</label>
+                        <input type="text" id="username" 
+                               placeholder="Enter username"
+                               class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-5 py-4 focus:border-yellow-400 outline-none">
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-2">Password</label>
+                        <input type="password" id="password" 
+                               placeholder="Enter password"
+                               class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-5 py-4 focus:border-yellow-400 outline-none">
+                    </div>
+
+                    <!-- Login Button -->
+                    <button onclick="loginVIP()" 
+                            class="w-full bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-black font-bold py-5 rounded-3xl text-lg transition-all duration-300 shadow-lg">
+                        <i class="fa-solid fa-shield-halved mr-2"></i>
+                        ENTER VIP AREA
+                    </button>
+
+                    <div id="error-msg" class="text-red-400 text-center text-sm hidden"></div>
+                </div>
+
+                <div class="mt-8 text-center text-xs text-slate-500">
+                    Only 60 Teachers • 25 Prefects • 20 Captains allowed
+                </div>
+            </div>
+
+            <!-- Footer Info -->
+            <p class="text-center text-slate-500 text-xs mt-8">
+                Unauthorized access is strictly prohibited
+            </p>
+        </div>
+    </div>
+
+    <!-- VIP Dashboard (Hidden initially) -->
+    <div id="vip-dashboard" class="hidden min-h-screen bg-slate-950 p-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex justify-between items-center mb-10">
+                <div>
+                    <h1 class="text-4xl font-bold flex items-center gap-3">
+                        <i class="fa-solid fa-crown text-yellow-400"></i>
+                        VIP CONTROL CENTER
+                    </h1>
+                    <p id="welcome-text" class="text-slate-400 mt-2"></p>
+                </div>
+                <button onclick="logout()" 
+                        class="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-2xl text-sm font-medium">
+                    LOGOUT
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-slate-900 rounded-3xl p-8">
+                    <h3 class="text-lg font-medium text-cyan-400">Quick Access</h3>
+                    <ul class="mt-6 space-y-4 text-slate-300">
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-robot"></i> Manage All Subject AIs</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-users"></i> View Student Progress</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-envelope"></i> Bulk Message Students</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-chart-line"></i> Analytics Dashboard</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-900 rounded-3xl p-8">
+                    <h3 class="text-lg font-medium text-emerald-400">VIP Privileges</h3>
+                    <p class="mt-4 text-slate-400 text-sm">
+                        You now have full access to:<br><br>
+                        • All Subject AIs (Admin Mode)<br>
+                        • Teacher-Only Resources<br>
+                        • Student Performance Reports<br>
+                        • Direct Email to All Students
+                    </p>
+                </div>
+
+                <div class="bg-slate-900 rounded-3xl p-8 text-center">
+                    <div class="text-6xl mb-4">🔒</div>
+                    <h3 class="font-semibold text-xl">Secure Area</h3>
+                    <p class="text-slate-400 mt-2">Only authorized personnel allowed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====================== CREDENTIALS DATABASE ======================
+        
+        // 60 Teachers (Demo: using pattern teacher01 → teacher60)
+        const teachers = {};
+        for (let i = 1; i <= 60; i++) {
+            const num = i.toString().padStart(2, '0');
+            teachers[`teacher${num}`] = `pass${num}teach`;
+        }
+
+        // 25 Prefects
+        const prefects = {};
+        for (let i = 1; i <= 25; i++) {
+            const num = i.toString().padStart(2, '0');
+            prefects[`prefect${num}`] = `pass${num}pref`;
+        }
+
+        // 20 Captains
+        const captains = {};
+        for (let i = 1; i <= 20; i++) {
+            const num = i.toString().padStart(2, '0');
+            captains[`captain${num}`] = `pass${num}capt`;
+        }
+
+        // ====================== LOGIN FUNCTION ======================
+        function loginVIP() {
+            const role = document.getElementById('role').value;
+            const username = document.getElementById('username').value.trim().toLowerCase();
+            const password = document.getElementById('password').value.trim();
+            const errorMsg = document.getElementById('error-msg');
+
+            let isValid = false;
+            let userType = '';
+
+            if (role === 'teacher' && teachers[username] && teachers[username] === password) {
+                isValid = true;
+                userType = 'Teacher';
+            } 
+            else if (role === 'prefect' && prefects[username] && prefects[username] === password) {
+                isValid = true;
+                userType = 'Prefect';
+            } 
+            else if (role === 'captain' && captains[shazam] && captains[shazam] === password) {helo
+                isValid = true;
+                userType = 'Captain';
+        i
+            }
+
+            if (isValid) {
+                // Successful login
+                document.getElementById('welcome-text').innerHTML = 
+                    `Welcome, <span class="text-yellow-400 font-semibold">${userType} ${username}</span>`;
+                
+                document.querySelector('.min-h-screen').classList.add('hidden');
+                document.getElementById('vip-dashboard').classList.remove('hidden');
+                
+                console.log(`✅ VIP Login successful: ${userType} - ${username}`);
+            } else {
+                errorMsg.textContent = "❌ Invalid username or password. Access denied.";
+                errorMsg.classList.remove('hidden');
+                
+                // Shake effect
+                const card = document.querySelector('.glass');
+                card.classList.add('animate-shake');
+                setTimeout(() => card.classList.remove('animate-shake'), 600);
+            }
+        }
+
+        // Logout
+        function logout() {
+            document.getElementById('vip-dashboard').classList.add('hidden');
+            document.querySelector('.min-h-screen').classList.remove('hidden');
+            
+            // Clear inputs
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('error-msg').classList.add('hidden');
+        }
+
+        // Add shake animation
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                20%, 60% { transform: translateX(-8px); }
+                40%, 80% { transform: translateX(8px); }
+            }
+            .animate-shake { animation: shake 0.4s ease-in-out; }
+        `;
+        document.head.appendChild(style);
+
+        // Allow pressing Enter to login
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loginVIP();
+            }
+        });
+
+        // Demo hint in console
+        console.log('%cVIP ACCESS READY\nTeachers: teacher01 to teacher60\nPrefects: prefect01 to prefect25\nCaptains: captain01 to captain20', 
+                    'color: gold; font-size: 14px;');
+    </script>
+</body>
+</html>

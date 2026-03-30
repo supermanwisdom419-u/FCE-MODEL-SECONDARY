@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScienceAI Academy • Learn & Train with Dedicated AIs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
+        :root {
+            --tw-color-primary: #00d4ff;
+        }
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .logo-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .chat-container {
+            scrollbar-width: thin;
+            scrollbar-color: #00d4ff #1f2937;
+        }
+        
+        .message-bubble {
+            max-width: 80%;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .subject-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .subject-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 50px -12px rgb(0 212 255 / 0.15);
+        }
+        
+        .ai-avatar {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-white">
+    <!-- HEADER -->
+    <div class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <div class="w-10 h-10 bg-cyan-500 rounded-2xl flex items-center justify-center text-3xl">🧬</div>
+                <h1 class="logo-font text-3xl tracking-tighter">ScienceAI Academy</h1>
+                <span class="text-xs bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-3xl font-medium">All Sciences • All AIs</span>
+            </div>
+            
+            <div class="flex items-center gap-x-8">
+                <!-- Progress Overview -->
+                <div class="flex items-center gap-x-2 text-sm">
+                    <div class="flex -space-x-2">
+                        <div class="w-7 h-7 bg-blue-500 rounded-2xl flex items-center justify-center text-xs ring-2 ring-slate-900">⚛️</div>
+                        <div class="w-7 h-7 bg-purple-500 rounded-2xl flex items-center justify-center text-xs ring-2 ring-slate-900">🧪</div>
+                    </div>
+                    <div>
+                        <p class="font-medium">Your Training Progress</p>
+                        <p class="text-cyan-400 text-xs">8 subjects • 42% complete</p>
+                    </div>
+                    <div class="w-32 h-2 bg-slate-700 rounded-3xl overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-cyan-400 to-purple-500 w-[42%]"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-x-2 bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-3xl cursor-pointer transition-colors">
+                    <i class="fa-solid fa-user-circle text-2xl"></i>
+                    <div>
+                        <p class="text-sm font-medium">Alex Rivera</p>
+                        <p class="text-xs text-slate-400 -mt-0.5">Student • Level 12</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex max-w-screen-2xl mx-auto">
+        <!-- SIDEBAR: All Science Subjects -->
+        <div class="w-72 bg-slate-900 h-[calc(100vh-73px)] border-r border-slate-800 p-6 overflow-auto">
+            <h2 class="uppercase text-xs font-semibold tracking-widest text-slate-400 mb-4 px-3">All Sciences</h2>
+            
+            <div id="subjects-list" class="space-y-2"></div>
+
+            <!-- Add new subject (demo) -->
+            <button onclick="addNewSubject()" 
+                    class="mt-8 w-full flex items-center justify-center gap-x-2 border border-dashed border-slate-400 hover:border-cyan-400 text-slate-400 hover:text-cyan-400 rounded-3xl py-4 text-sm font-medium transition-colors">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add New Science Subject</span>
+            </button>
+            
+            <div class="mt-auto pt-8 text-[10px] text-slate-500 px-3">
+                Each subject has its own specialized AI tutor trained exclusively on that domain.<br>
+                Real AI powered by your choice of LLM (Grok, GPT, Claude, etc.) – see code comments.
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT AREA -->
+        <div class="flex-1 flex flex-col" id="main-content">
+            
+            <!-- HOME / WELCOME VIEW -->
+            <div id="home-view" class="flex-1 p-8">
+                <div class="max-w-3xl mx-auto">
+                    <h1 class="text-6xl font-semibold tracking-tighter leading-none mb-4">
+                        Master every science.<br>
+                        <span class="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">With its own AI.</span>
+                    </h1>
+                    <p class="text-xl text-slate-400 mb-10">
+                        Choose any science subject. Train with a dedicated AI tutor built only for that field.<br>
+                        Get extra help from real teachers via direct email.
+                    </p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="subject-cards"></div>
+                </div>
+            </div>
+
+            <!-- SUBJECT DETAIL VIEW -->
+            <div id="subject-view" class="flex-1 hidden flex-col">
+                
+                <div class="px-8 py-6 border-b border-slate-800 flex items-center justify-between">
+                    <div class="flex items-center gap-x-4">
+                        <span id="subject-emoji" class="text-5xl"></span>
+                        <div>
+                            <h2 id="subject-title" class="text-4xl font-semibold tracking-tight"></h2>
+                            <p id="subject-subtitle" class="text-slate-400"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-x-3">
+                        <!-- AI Status -->
+                        <div class="flex items-center bg-emerald-400/10 text-emerald-400 text-sm font-medium px-5 h-9 rounded-3xl">
+                            <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse mr-2"></div>
+                            AI Tutor Online • Specialized
+                        </div>
+                        
+                        <!-- Back button -->
+                        <button onclick="goHome()" 
+                                class="flex items-center gap-x-2 hover:bg-slate-800 px-5 h-9 rounded-3xl text-sm font-medium transition-colors">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            <span>All Subjects</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TABS -->
+                <div class="px-8 flex border-b border-slate-800">
+                    <button onclick="switchTab(0)" id="tab-0"
+                            class="tab-button active px-8 py-5 font-medium border-b-2 border-cyan-400 text-cyan-400">🤖 Train with AI</button>
+                    <button onclick="switchTab(1)" id="tab-1"
+                            class="tab-button px-8 py-5 font-medium text-slate-400 hover:text-white">📚 Learn</button>
+                    <button onclick="switchTab(2)" id="tab-2"
+                            class="tab-button px-8 py-5 font-medium text-slate-400 hover:text-white">📧 Contact Teacher</button>
+                </div>
+
+                <!-- TAB CONTENTS -->
+                
+                <!-- TAB 0: AI CHAT -->
+                <div id="tab-content-0" class="flex-1 flex flex-col">
+                    <div id="chat-window" class="chat-container flex-1 p-8 overflow-y-auto space-y-8 bg-slate-950">
+                        <!-- Messages populated by JS -->
+                    </div>
+                    
+                    <!-- Input area -->
+                    <div class="p-6 border-t border-slate-800 bg-slate-900">
+                        <div class="flex gap-x-3">
+                            <input id="chat-input" 
+                                   onkeydown="if(event.key==='Enter') sendMessage()"
+                                   type="text" 
+                                   placeholder="Ask your subject AI anything... (e.g. Explain quantum entanglement)"
+                                   class="flex-1 bg-slate-800 border border-slate-700 focus:border-cyan-400 rounded-3xl px-7 py-5 text-lg outline-none placeholder:text-slate-400">
+                            <button onclick="sendMessage()" 
+                                    class="bg-cyan-500 hover:bg-cyan-400 w-14 h-14 rounded-3xl flex items-center justify-center text-2xl transition-colors">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-400 text-center mt-3">
+                            This AI is trained exclusively on <span id="current-subject-ai-name" class="font-medium"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- TAB 1: Learn (sample lessons) -->
+                <div id="tab-content-1" class="flex-1 p-8 hidden overflow-auto">
+                    <div class="max-w-2xl mx-auto">
+                        <h3 class="text-2xl font-semibold mb-6 flex items-center gap-x-2">
+                            <i class="fa-solid fa-book"></i>
+                            Today's Lesson
+                        </h3>
+                        <div id="lesson-content" class="prose prose-invert max-w-none">
+                            <!-- Filled by JS per subject -->
+                        </div>
+                        
+                        <div class="mt-12">
+                            <h4 class="font-medium mb-4">Quick Training Quiz</h4>
+                            <div id="quiz-container" class="space-y-6"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: Contact Teacher -->
+                <div id="tab-content-2" class="flex-1 p-8 hidden">
+                    <div class="max-w-xl mx-auto bg-slate-900 rounded-3xl p-10">
+                        <div class="flex justify-center mb-6">
+                            <div class="text-7xl">👩‍🔬</div>
+                        </div>
+                        <h3 class="text-3xl font-semibold text-center mb-2">Need human help?</h3>
+                        <p id="teacher-name" class="text-center text-slate-400 mb-8">Your dedicated teacher for this subject is ready to help</p>
+                        
+                        <div class="border border-slate-700 rounded-3xl p-8 text-center">
+                            <p class="text-sm uppercase tracking-widest mb-2 text-slate-400">Direct Email Link</p>
+                            <a id="teacher-email-link" 
+                               href="#"
+                               onclick="sendEmailToTeacher(); return false;"
+                               class="inline-flex items-center gap-x-3 bg-white text-slate-900 hover:bg-cyan-400 hover:text-white transition-colors text-xl font-medium px-10 py-6 rounded-3xl">
+                                <i class="fa-solid fa-envelope"></i>
+                                <span id="teacher-email-text" class="font-mono"></span>
+                            </a>
+                            <p class="text-xs text-slate-400 mt-6">
+                                Click the link above to instantly open your default email client.<br>
+                                Subject line will be pre-filled with your current topic.
+                            </p>
+                        </div>
+                        
+                        <div class="mt-10 grid grid-cols-2 gap-6 text-sm">
+                            <div class="bg-slate-800 rounded-3xl p-6">
+                                <i class="fa-solid fa-clock text-cyan-400 mb-3"></i>
+                                <p class="font-medium">Average response time</p>
+                                <p class="text-3xl font-semibold text-emerald-400">4 hours</p>
+                            </div>
+                            <div class="bg-slate-800 rounded-3xl p-6">
+                                <i class="fa-solid fa-graduation-cap text-cyan-400 mb-3"></i>
+                                <p class="font-medium">Teacher specialty</p>
+                                <p id="teacher-specialty" class="text-3xl font-semibold"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // TAILWIND INITIALIZATION
+        function initTailwind() {
+            tailwind.config = {
+                content: [],
+                theme: {
+                    extend: {}
+                }
+            }
+        }
+
+        // DATA: All science subjects with their own AI + teacher email
+        let subjects = [
+            {
+                id: 1,
+                name: "Physics",
+                emoji: "⚛️",
+                color: "cyan",
+                subtitle: "Mechanics • Quantum • Relativity",
+                aiName: "QuantumBot",
+                teacherName: "Dr. Elena Voss",
+                teacherEmail: "elena.voss@physics.academy.edu",
+                teacherSpecialty: "Astrophysics & Particle Physics",
+                sampleLesson: `
+                    <h4 class="text-xl mb-3">Lesson: Quantum Entanglement</h4>
+                    <p class="mb-6">When two particles become entangled, the state of one instantly influences the other — no matter the distance. This is one of the most mind-bending phenomena in physics.</p>
+                    <div class="bg-slate-800 rounded-3xl p-6 text-sm">Key equation: EPR Paradox → Bell's Inequality</div>
+                `,
+                sampleQuiz: [
+                    { q: "What does 'superposition' mean?", a: "A particle exists in multiple states at once until measured" }
+                ]
+            },
+            {
+                id: 2,
+                name: "Chemistry",
+                emoji: "🧪",
+                color: "purple",
+                subtitle: "Reactions • Molecules • Elements",
+                aiName: "MoleculeMind",
+                teacherName: "Prof. Marcus Hale",
+                teacherEmail: "marcus.hale@chemistry.academy.edu",
+                teacherSpecialty: "Organic Synthesis & Catalysis",
+                sampleLesson: `
+                    <h4 class="text-xl mb-3">Lesson: Periodic Trends</h4>
+                    <p class="mb-6">Atomic radius decreases across a period because effective nuclear charge increases.</p>
+                `,
+                sampleQuiz: [
+                    { q: "What is the pH of a 0.01 M HCl solution?", a: "2" }
+                ]
+            },
+            {
+                id: 3,
+                name: "Biology",
+                emoji: "🧬",
+                color: "emerald",
+                subtitle: "Cells • Genetics • Evolution",
+                aiName: "GenomeGuide",
+                teacherName: "Dr. Priya Sharma",
+                teacherEmail: "priya.sharma@biology.academy.edu",
+                teacherSpecialty: "Molecular Genetics & CRISPR",
+                sampleLesson: `
+                    <h4 class="text-xl mb-3">Lesson: CRISPR Gene Editing</h4>
+                    <p class="mb-6">CRISPR-Cas9 acts as molecular scissors to cut and edit DNA with high precision.</p>
+                `,
+                sampleQuiz: [
+                    { q: "What is the central dogma of biology?", a: "DNA → RNA → Protein" }
+                ]
+            },
+            {
+                id: 4,
+                name: "Astronomy",
+                emoji: "🌌",
+                color: "amber",
+                subtitle: "Stars • Galaxies • Cosmology",
+                aiName: "CosmosAI",
+                teacherName: "Prof. Liam Chen",
+                teacherEmail: "liam.chen@astronomy.academy.edu",
+                teacherSpecialty: "Exoplanets & Black Holes",
+                sampleLesson: `
+                    <h4 class="text-xl mb-3">Lesson: Black Hole Event Horizon</h4>
+                    <p class="mb-6">Nothing — not even light — can escape once it crosses the event horizon.</p>
+                `,
+                sampleQuiz: [
+                    { q: "What is the name of our galaxy?", a: "Milky Way" }
+                ]
+            },
+            {
+                id: 5,
+                name: "Geology",
+                emoji: "🪨",
+                color: "stone",
+                subtitle: "Earth • Rocks • Tectonics",
+                aiName: "EarthCore",
+                teacherName: "Dr. Sofia Rivera",
+                teacherEmail: "sofia.rivera@geology.academy.edu",
+                teacherSpecialty: "Plate Tectonics & Volcanology",
+                sampleLesson: `
+                    <h4 class="text-xl mb-3">Lesson: Continental Drift</h4>
+                    <p class="mb-6">All continents were once joined in the supercontinent Pangaea.</p>
+                `,
+                sampleQuiz: [
+                    { q: "What causes earthquakes?", a: "Movement along tectonic plate boundaries" }
+                ]
+            },
+            {
+                id: 6,
+                name: "Environmental Science",
+                emoji: "🌍",
+                color: "teal",
+                subtitle: "Climate • Ecosystems • Sustainability",
+                aiName: "EcoGuardian",
+                teacherName: "Prof. Jamal Okoro",
+                teacherEmail: "jamal.okoro@envsci.academy.edu",
+                teacherSpecialty: "Climate Modeling & Biodiversity",
+                sampleLesson: `
+                    <h4 class="text-xl mb-3">Lesson: Carbon Cycle & Climate Change</h4>
+                    <p class="mb-6">Human activity has increased atmospheric CO₂ by 50% since pre-industrial levels.</p>
+                `,
+                sampleQuiz: [
+                    { q: "What is the main greenhouse gas?", a: "Carbon dioxide (CO₂)" }
+                ]
+            },
+            {
+                id: 7,
+                name: "Mathematics",
+                emoji: "📐",
+                color: "violet",
+                subtitle: "Foundations of All Science",
+                aiName: "MathForge",
+                teacherName: "Dr. Aisha Khan",
+                teacherEmail: "aisha.khan@math.academy.edu",
+                teacherSpecialty: "Differential Equations & Chaos Theory",
+                sampleLesson: `
+                    <h4 class="text-xl mb-3">Lesson: Chaos Theory & Butterfly Effect</h4>
+                    <p class="mb-6">Tiny changes in initial conditions can lead to vastly different outcomes.</p>
+                `,
+                sampleQuiz: [
+                    { q: "What is the value of π to 5 decimals?", a: "3.14159" }
+                ]
+            },
+            {
+                id: 8,
+                name: "Computer Science",
+                emoji: "💻",
+                color: "sky",
+                subtitle: "Algorithms • AI • Data",
+                aiName: "CodeOracle",
+                teacherName: "Prof. Diego Morales",
+                teacherEmail: "diego.morales@cs.academy.edu",
+                teacherSpecialty: "Machine Learning & Quantum Computing",
+                sampleLesson: `
+                    <h4 class="text-xl mb-3">Lesson: Neural Networks</h4>
+                    <p class="mb-6">Inspired by the human brain, neural nets power modern AI.</p>
+                `,
+                sampleQuiz: [
+                    { q: "What does 'Big O' notation describe?", a: "Time and space complexity of algorithms" }
+                ]
+            }
+        ]
+
+        let currentSubject = null
+        let chatHistory = {} // per subject
+
+        // Render sidebar list
+        function renderSidebar() {
+            const container = document.getElementById("subjects-list")
+            container.innerHTML = subjects.map(s => `
+                <div onclick="openSubject(${s.id})" 
+                     class="flex items-center gap-x-3 px-4 py-4 hover:bg-slate-800 rounded-3xl cursor-pointer transition-colors ${currentSubject && currentSubject.id === s.id ? 'bg-slate-800' : ''}">
+                    <span class="text-3xl">${s.emoji}</span>
+                    <div class="flex-1">
+                        <p class="font-semibold">${s.name}</p>
+                        <p class="text-xs text-slate-400">${s.subtitle}</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-400"></i>
+                </div>
+            `).join("")
+        }
+
+        // Render home cards
+        function renderHomeCards() {
+            const container = document.getElementById("subject-cards")
+            container.innerHTML = subjects.map(s => `
+                <div onclick="openSubject(${s.id})" class="subject-card bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-3xl p-6 cursor-pointer">
+                    <div class="flex justify-between items-start">
+                        <div class="text-6xl mb-6">${s.emoji}</div>
+                        <span class="text-xs uppercase font-medium bg-${s.color}-400/10 text-${s.color}-400 px-3 py-1 rounded-3xl">AI Ready</span>
+                    </div>
+                    <h3 class="font-semibold text-2xl mb-1">${s.name}</h3>
+                    <p class="text-slate-400 text-sm">${s.subtitle}</p>
+                    <div class="mt-8 flex items-center justify-between text-xs">
+                        <div class="flex items-center">
+                            <span class="text-cyan-400">🤖</span>
+                            <span class="ml-1">${s.aiName}</span>
+                        </div>
+                        <div onclick="event.stopImmediatePropagation(); openSubject(${s.id}); switchTab(2)" class="text-slate-400 hover:text-white flex items-center">
+                            <i class="fa-solid fa-envelope mr-1"></i> Teacher
+                        </div>
+                    </div>
+                </div>
+            `).join("")
+        }
+
+        // Open a subject
+        function openSubject(id) {
+            currentSubject = subjects.find(s => s.id === id)
+            if (!currentSubject) return
+
+            // Initialize chat history if not exists
+            if (!chatHistory[currentSubject.id]) {
+                chatHistory[currentSubject.id] = [
+                    { role: "ai", content: `Hello! I'm <strong>${currentSubject.aiName}</strong>, your exclusive ${currentSubject.name} AI tutor. Ask me anything about ${currentSubject.name.toLowerCase()}!` }
+                ]
+            }
+
+            // Hide home, show subject view
+            document.getElementById("home-view").classList.add("hidden")
+            const subjectView = document.getElementById("subject-view")
+            subjectView.classList.remove("hidden")
+            subjectView.classList.add("flex")
+
+            // Fill header
+            document.getElementById("subject-emoji").innerHTML = currentSubject.emoji
+            document.getElementById("subject-title").innerText = currentSubject.name
+            document.getElementById("subject-subtitle").innerText = currentSubject.subtitle
+
+            // Fill AI name in chat footer
+            document.getElementById("current-subject-ai-name").innerText = currentSubject.name
+
+            // Render first tab (AI chat)
+            switchTab(0)
+            renderSidebar() // highlight active in sidebar
+        }
+
+        function goHome() {
+            currentSubject = null
+            document.getElementById("subject-view").classList.add("hidden")
+            document.getElementById("subject-view").classList.remove("flex")
+            document.getElementById("home-view").classList.remove("hidden")
+            renderSidebar()
+        }
+
+        // Switch between Learn / AI / Teacher tabs
+        function switchTab(n) {
+            // Remove active from all
+            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove("active", "border-b-2", "border-cyan-400", "text-cyan-400"))
+            // Activate clicked
+            document.getElementById(`tab-${n}`).classList.add("active", "border-b-2", "border-cyan-400", "text-cyan-400")
+
+            // Hide all contents
+            document.getElementById("tab-content-0").classList.add("hidden")
+            document.getElementById("tab-content-1").classList.add("hidden")
+            document.getElementById("tab-content-2").classList.add("hidden")
+
+            // Show selected
+            document.getElementById(`tab-content-${n}`).classList.remove("hidden")
+
+            if (n === 0) renderChat()
+            if (n === 1) renderLessonAndQuiz()
+            if (n === 2) renderTeacherContact()
+        }
+
+        // Render AI chat
+        function renderChat() {
+            const container = document.getElementById("chat-window")
+            container.innerHTML = chatHistory[currentSubject.id].map(msg => `
+                <div class="${msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'}">
+                    <div class="message-bubble ${msg.role === 'user' ? 'bg-cyan-500 text-white' : 'bg-slate-800'} rounded-3xl px-6 py-4">
+                        ${msg.content}
+                    </div>
+                </div>
+            `).join("")
+            container.scrollTop = container.scrollHeight
+        }
+
+        // Send message to AI (MOCK – in production replace with real LLM call)
+        function sendMessage() {
+            const input = document.getElementById("chat-input")
+            const query = input.value.trim()
+            if (!query || !currentSubject) return
+
+            // Add user message
+            chatHistory[currentSubject.id].push({ role: "user", content: query })
+            renderChat()
+            input.value = ""
+
+            // Simulate thinking
+            const container = document.getElementById("chat-window")
+            const loadingHTML = `
+                <div class="flex justify-start">
+                    <div class="flex items-center gap-x-2 bg-slate-800 rounded-3xl px-6 py-4">
+                        <div class="ai-avatar w-5 h-5 border-2 border-slate-300 border-t-cyan-400 animate-spin rounded-full"></div>
+                        <span class="text-xs text-slate-400">${currentSubject.aiName} is thinking...</span>
+                    </div>
+                </div>`
+            container.insertAdjacentHTML('beforeend', loadingHTML)
+            container.scrollTop = container.scrollHeight
+
+            // Mock AI response (real version would call Grok/OpenAI/Claude with a system prompt like: "You are an expert ${currentSubject.name} tutor. Answer only using knowledge from this field.")
+            setTimeout(() => {
+                // Remove loading
+                container.lastElementChild.remove()
+
+                let reply = `Great question about <strong>${currentSubject.name}</strong>! `
+
+                // Simple subject-specific replies
+                if (currentSubject.name === "Physics") reply += "According to quantum mechanics, particles can be in superposition until observed."
+                else if (currentSubject.name === "Chemistry") reply += "This reaction follows Le Chatelier’s principle — the system will shift to counteract the change."
+                else if (currentSubject.name === "Biology") reply += "This process is regulated by the central dogma: DNA is transcribed into RNA and translated into proteins."
+                else if (currentSubject.name === "Astronomy") reply += "This phenomenon was first predicted by Einstein’s general relativity."
+                else reply += "Here’s a detailed explanation based on core principles of this science."
+
+                chatHistory[currentSubject.id].push({ role: "ai", content: reply })
+                renderChat()
+            }, 1400)
+        }
+
+        // Render lesson + quiz for Learn tab
+        function renderLessonAndQuiz() {
+            document.getElementById("lesson-content").innerHTML = currentSubject.sampleLesson
+
+            const quizHTML = currentSubject.sampleQuiz.map((item, i) => `
+                <div class="bg-slate-800 rounded-3xl p-6">
+                    <p class="font-medium mb-4">${item.q}</p>
+                    <input type="text" id="quiz-input-${i}" 
+                           placeholder="Type your answer..."
+                           class="w-full bg-slate-900 border border-slate-700 rounded-3xl px-6 py-4 text-sm outline-none focus:border-cyan-400">
+                    <button onclick="checkQuizAnswer(${i})" 
+                            class="mt-4 bg-white text-slate-900 hover:bg-cyan-400 hover:text-white px-8 py-3 rounded-3xl text-sm font-medium">Submit Answer</button>
+                </div>`).join("")
+            
+            document.getElementById("quiz-container").innerHTML = quizHTML || "<p class='text-slate-400'>No quiz available yet for this demo subject.</p>"
+        }
+
+        function checkQuizAnswer(i) {
+            const input = document.getElementById(`quiz-input-${i}`)
+            const answer = input.value.trim().toLowerCase()
+            const correct = currentSubject.sampleQuiz[i].a.toLowerCase()
+            
+            if (answer === correct) {
+                input.parentElement.style.border = "2px solid rgb(134 239 172)"
+                input.parentElement.innerHTML += `<p class="text-emerald-400 mt-4 font-medium">✅ Correct! Well done.</p>`
+            } else {
+                input.parentElement.style.border = "2px solid rgb(251 113 133)"
+                input.parentElement.innerHTML += `<p class="text-rose-400 mt-4 font-medium">❌ Not quite. The answer is: ${currentSubject.sampleQuiz[i].a}</p>`
+            }
+        }
+
+        // Render Teacher contact tab
+        function renderTeacherContact() {
+            document.getElementById("teacher-name").innerHTML = `${currentSubject.teacherName} <span class="text-xs bg-emerald-300 text-emerald-800 px-2 py-0.5 rounded-xl ml-2">Online</span>`
+            const link = document.getElementById("teacher-email-link")
+            link.href = `mailto:${currentSubject.teacherEmail}?subject=Question%20about%20${encodeURIComponent(currentSubject.name)}%20from%20ScienceAI%20Academy`
+            document.getElementById("teacher-email-text").innerText = currentSubject.teacherEmail
+            document.getElementById("teacher-specialty").innerText = currentSubject.teacherSpecialty
+        }
+
+        // Instantly open email client with pre-filled subject
+        function sendEmailToTeacher() {
+            if (!currentSubject) return
+            const subjectLine = `Question about ${currentSubject.name} – ScienceAI Academy Student`
+            window.location.href = `mailto:${currentSubject.teacherEmail}?subject=${encodeURIComponent(subjectLine)}`
+        }
+
+        // Demo: Add a new subject dynamically
+        function addNewSubject() {
+            const newSubject = {
+                id: Date.now(),
+                name: "Neuroscience",
+                emoji: "🧠",
+                color: "pink",
+                subtitle: "Brain • Cognition • Neural Networks",
+                aiName: "NeuroSpark",
+                teacherName: "Dr. Maya Patel",
+                teacherEmail: "maya.patel@neurosci.academy.edu",
+                teacherSpecialty: "Computational Neuroscience",
+                sampleLesson: `<h4 class="text-xl mb-3">Lesson: Synaptic Plasticity</h4><p class="mb-6">Neurons that fire together wire together — Hebbian learning.</p>`,
+                sampleQuiz: [{ q: "Who discovered the neuron doctrine?", a: "Santiago Ramón y Cajal" }]
+            }
+            subjects.push(newSubject)
+            renderSidebar()
+            renderHomeCards()
+            alert("✅ New subject 'Neuroscience' added with its own AI and teacher email link!")
+            openSubject(newSubject.id)
+        }
+
+        // Initialize the entire app
+        function launchApp() {
+            initTailwind()
+            renderSidebar()
+            renderHomeCards()
+            
+            // Welcome toast
+            console.log('%c🚀 ScienceAI Academy ready! Each subject has its own AI + direct teacher email link.', 'background:#00d4ff;color:#0f172a;font-weight:bold;padding:4px 8px;border-radius:9999px')
+            
+            // Optional: keyboard shortcut hint
+            console.log('💡 Press "/" anywhere to focus the AI chat input when inside a subject')
+        }
+
+        // Start everything
+        window.onload = launchApp
+    </script>
+</body>
+</html>
